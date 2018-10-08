@@ -1,0 +1,77 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+#house_train
+house_train=pd.read_csv('housing_training.csv',sep=',',header = None)
+house_train=np.array(house_train)
+x_train=house_train[:,:13]
+y=pd.DataFrame(house_train[:,13])
+x_one=np.ones((300,1))
+x=pd.DataFrame(np.hstack((x_one,x_train)))  #Adding coloumn of ones to training data
+#TesT Data
+house_test=pd.read_csv('housing_test.csv',sep=',',header=None)
+house_test=np.array(house_test)
+x_test=house_test[:,:13]
+x_ones=np.ones((206,1))
+y_test =pd.DataFrame(house_test[:,13])   
+x_concat=np.hstack((x_ones, x_test))   #Adding coloumn od ones to test data
+
+#Calculating Coefficient B
+x_tran=pd.DataFrame(np.transpose(x))  #X Transpose
+A=np.dot(x_tran,x)  #(X'X)
+A_inv =pd.DataFrame(np.linalg.pinv(A))  #A = (X'X)inv
+B=np.dot(x_tran,y)   #B=X'Y
+coeff=A_inv.dot(B)   #Coeffcient (b)
+int=pd.DataFrame(['Intercept', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'c_6', 'c_7', 'c_8', 'c_9','c_10', 'c_11', 'c_12', 'c_13'])
+bingo = pd.concat([int, coeff], axis=1)  #Adding array of characters for Coeff
+bingo 
+Y=pd.DataFrame(np.dot(x_concat, coeff)) #predictions
+
+#Plot Diagram
+plt.scatter(Y, y_test, color='red', marker='p') #Plotting values with Ground truth vs Prediction
+label ='Prediction'
+plt.axis([-2, 55, -2, 55])
+x1=[-2,55]
+y1=[-2,55]
+plt.plot(x1,y1)
+plt.show()
+
+#RMSE
+Yi=np.dot(x_concat, coeff) #calculating the test data with coeff values
+#Yi
+n= len(Yi)
+rmse = np.linalg.norm(y_test-Yi) /np.sqrt(n)  #Calculating the RMSE
+print("RMSE:", rmse)
+
+#TASK 2:
+Mnist_15=np.genfromtxt('MNIST_15_15.csv', delimiter=",", dtype=float)
+Mnist_15 = np.array(Mnist_15)
+Mnist_label=np.genfromtxt('MNIST_LABEL.csv', delimiter=",", dtype=float )
+#Mnist_label
+
+#NORMALIZE the Training data X = Mnist_15_15
+Normal = (Mnist_15 - Mnist_15.mean(axis=0))/Mnist_15.std(axis=0)
+print Normal
+Mnist_15
+
+#K Fold Cross Validation
+from sklearn.model_selection import KFold
+kf=KFold(n_splits=10)
+kf.get_n_splits(nom)
+print(kf)
+
+#Finding b for Mnist Data
+X=pd.DataFrame(Mnist_15)
+#X
+Y=pd.DataFrame(Mnist_label)
+X_tran=X.transpose()   #X Transpose
+Xdot=X_tran.dot(X)     #X'X
+I=np.identity(225)     #Identity Matrix
+lamb = 0.1             #LAMBDA = 0.1
+I_lamb=I.dot(lamb)     #Lambda*Identity Matrix
+A_Mnist=Xdot + I_lamb  #(X'X+LAMBDA*I)
+MnistA_inv = np.linalg.inv(A_Mnist)  #(X'X+LAMBDA*I)'1
+Bdot=X_tran.dot(Y)                   #X'Y
+coeff_Mnist=MnistA_inv.dot(Bdot)     #b for Mnist Value
+Y_Mnist= X.dot(coeff_Mnist)          #Y_Mnist = X*b
+Y_Mnist
