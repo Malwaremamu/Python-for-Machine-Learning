@@ -1,0 +1,46 @@
+import numpy as np
+import pandas as pd
+Mnist_data = pd.read_csv("MNIST_100.csv")
+#Mnist_data
+Y = Mnist_data.iloc[:,0]
+#Mnist_label
+X = np.array(Mnist_data.iloc[:,1:]) #Extracting only pixel data
+#X
+mean_x = np.mean(X, axis=0) #Mean of X for every coloumn
+#mean_x
+#Normalizing the data
+normedData = [[0 for i in range(len(mean_x))] for j in range(len(X))]
+for column in range(len(mean_x)):
+for row in range(len(X)):
+normedData[row][column] = X[row][column] - mean_x[column]
+len(normedData)
+normal = np.array(normedData)
+normal
+#Calculating the Covariance
+cov = np.dot(normal.T, normal)
+cov
+#Calculating the Eigen vector and value using the linalg library
+eigen_values, eigen_vectors = np.linalg.eig(cov)
+#pd.DataFrame(eigen_values)
+#pd.DataFrame(eigen_vectors)
+eigen_2 = eigen_vectors[:,:2] #Selecting 2 coloumns in eigen vector
+plotter = np.dot(normal, eigen_2) #X'W
+plotter1 = pd.DataFrame(plotter)
+#Plotting the data
+import matplotlib.pyplot as plt
+plt.plot(plotter[:100, 0], plotter[:100, 1], 'r.', label = 'label0')
+plt.plot(plotter[100:200, 0], plotter[100:200, 1], 'b*', label = 'label1')
+plt.plot(plotter[200:300, 0], plotter[200:300, 1], 'b.', label = 'label2')
+plt.plot(plotter[300:400, 0], plotter[300:400, 1], 'g.', label = 'label3')
+plt.plot(plotter[400:500, 0], plotter[400:500, 1], 'y.', label = 'label4')
+plt.plot(plotter[500:600, 0], plotter[500:600, 1], 'g.', label = 'label5')
+plt.plot(plotter[600:700, 0], plotter[600:700, 1], 'm.', label = 'label6')
+plt.plot(plotter[700:800, 0], plotter[700:800, 1], 'c.', label = 'label7')
+plt.plot(plotter[800:900, 0], plotter[800:900, 1], 'k.', label = 'label8')
+plt.plot(plotter[900:1000, 0], plotter[900:1000, 1], 'r*', label = 'label9')
+plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+plt.xlim([-1200, 2200])
+plt.ylim([-1400, 1500])
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.show()
